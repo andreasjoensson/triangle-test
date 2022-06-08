@@ -1,0 +1,164 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<style>
+.input-tri{
+  border: none;
+  border-bottom: 2px solid black;
+}
+.input-tri:focus{
+  outline: none;
+  border-bottom: 2px solid #0d6efd;
+}
+</style>
+
+<header>
+  <div class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <a href="#" class="navbar-brand d-flex align-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-triangle" viewBox="0 0 16 16">
+          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+        </svg>
+        <strong class="ms-2">Triangle</strong>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="pt-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8">
+        <h1 class="fw-light">What triangle is it?</h1>
+        <p class="lead text-muted">Input the three angles of your triangle, and find out if it is scalene, equilateral, isosceles or neither</p>
+        <form  (ngSubmit)="checkIfTriangle()">
+        <div class="row row-cols-1 mt-3 row-cols-sm-2 row-cols-md-3 g-3">
+          <div class="col">
+           <input type="number" (keypress)="numberOnly($event)"  onKeyUp="if(this.value>90){this.value='90';}else if(this.value<0){this.value='0';}" min="0" max="90" required class="input-tri"  placeholder="X &#176;"  id="x" [(ngModel)]="triangle.x" name="x"/> 
+          </div>
+
+          <div class="col">
+            <input type="number" (keypress)="numberOnly($event)"  onKeyUp="if(this.value>90){this.value='90';}else if(this.value<0){this.value='0';}" min="0" max="90" required class="input-tri" placeholder="Y &#176;" id="y" [(ngModel)]="triangle.y" name="y"/> 
+           </div>
+
+           <div class="col">
+            <input type="number" (keypress)="numberOnly($event)" onKeyUp="if(this.value>90){this.value='90';}else if(this.value<0){this.value='0';}" min="0" max="90" required class="input-tri" placeholder="Z &#176;" id="z" [(ngModel)]="triangle.z" name="z"/> 
+           </div>
+        </div>
+
+        <div *ngIf="fillError.length > 0" class="alert alert-danger mt-3" role="alert">
+          {{fillError}}
+        </div>
+
+        <div *ngIf="maxError.length > 0" class="alert alert-danger mt-3" role="alert">
+          {{maxError}}
+        </div>
+
+        <button *ngIf="loading == false" type="submit" class="btn btn-primary mt-5">Calculate</button>
+
+        <button *ngIf="loading == true" class="btn btn-primary mt-5" type="button" disabled>
+          <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+          Loading...
+        </button>
+
+        </form>
+       
+      </div>
+
+      <div class="col-lg-6 col-md-8">
+        <h1 class="fw-light">Triangle preview</h1>
+        <p class="lead text-muted">How the triangle should look according to your inputs.</p>
+        <canvas class="mx-auto" id="canvas" width="300" height="300"></canvas>
+        
+      </div>
+    </div>
+  </section>
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row g-3">
+        <div class="col-8 col-sm-6 mx-auto">
+          <h2 *ngIf="type" class="text-center mb-3 fw-light">Result</h2>
+
+          <div *ngIf='type === "Scalene"' class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" src="https://i.pinimg.com/550x/c4/92/f9/c492f95021b2c5b88d0b2e5e666b96a6.jpg"/>
+
+            <div class="card-body">
+              <h3>Scalene</h3>
+              <p class="card-text">
+                A Scalene triangle is a triangle that has 3 unequal sides. Since all the three sides are unequal, this means all the three angles are also of different measures. 
+              </p>
+            </div>
+          </div>
+
+          <div *ngIf='type === "Isosceles"' class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" src="https://latex.artofproblemsolving.com/7/9/c/79c4904ff735bf765ca842cac6dc281aaf455e43.png"/>
+
+            <div class="card-body">
+              <h3>Isosceles</h3>
+              <p class="card-text">An isosceles triangle is a triangle with (at least) two equal sides. In the figure above, the two equal sides have length and the remaining side has length.</p>
+            </div>
+          </div>
+
+
+          <div *ngIf='type === "Right Angled"' class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Right_Angle_Triangle.svg/1200px-Right_Angle_Triangle.svg.png"/>
+
+            <div class="card-body">
+              <h3>Right Angled</h3>
+              <p class="card-text">A right angled triangle is a triangle with one of the angles as 90 degrees. A 90-degree angle is called a right angle, and hence the triangle with a right angle is called a right triangle.</p>
+            </div>
+          </div>
+
+
+          <div *ngIf='type === "Equilateral"' class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" src="https://cdn-skill.splashmath.com/panel-uploads/GlossaryTerm/177b91e8993b48a48b35053de69f81e6/1547806484_Equilateral-Triangle.png"/>
+
+            <div class="card-body">
+              <h3>Equilateral</h3>
+              <p class="card-text">
+                An equilateral triangle is a triangle with all three sides of equal length , corresponding to what could also be known as a "regular" triangle. An equilateral triangle is therefore a special case of an isosceles triangle having not just two, but all three sides equal.
+              </p>
+              
+            </div>
+          </div>
+
+        </div>
+
+
+        
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="text-muted py-5">
+  <div class="container">
+    <p class="float-end mb-1">
+      <a href="#">Back to top</a>
+    </p>
+    <p class="mb-1">Andreas Moreno Jønsson</p>
+    <a target="_blank" href="https://andreasjoensson.github.io/andreasjoensson/">
+      https://andreasjoensson.github.io/andreasjoensson/
+    </a>
+  </div>
+</footer>
+
+
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+

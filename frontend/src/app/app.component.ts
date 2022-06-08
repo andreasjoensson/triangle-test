@@ -48,7 +48,6 @@ checkIfTriangle(){
       this.submitTriangle()
     }
     else{
-      console.log("HERHENNE")
       this.maxError = 'This is not a valid triangle, please make sure all angles make up 180 degrees'
     }
   }
